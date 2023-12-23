@@ -1,0 +1,57 @@
+{% extends 'mlmtree/app/base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+    <div id="introduction">
+        <h2>Übersicht</h2>
+        <p>Erfahre die Funktion dieser Seite über den Hilfe-Knopf oben rechts.</p>
+    </div>
+
+    <hr>
+
+    <div id="overview">
+        {% for entry in entries %}
+            <div class="w-100 p-3 mb-3 rounded rounded-3 bg-dark">
+                <a class="w-100 text-decoration-none text-light" href="{% url 'mlmtree:tree-view' entry.tree.id %}#{{ entry.tree.top_id }}">
+                    <h4>{{ entry.tree.title }}</h4>
+                    <span>{{ entry.tree.description }}</span>
+                </a>
+
+                {% if entry.identities %}
+                    <hr class="px-2 my-2 text-light">
+                    <div class="row px-2">
+                        {% for identity in entry.identities %}
+                            <a class="text-decoration-none col m-1 p-2 rounded rounded-3 bg-light text-dark" href="{% url 'mlmtree:tree-view' entry.tree.id %}#{{ identity.id }}">
+                                <b>{{ identity.name }}</b><br>
+                                <i>{{ identity.userid }}</i>
+                                <br class="mb-1">
+                                <pre class="mb-1">{{ identity.info }}</pre>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        {% empty %}
+            <div class="col">
+                <h4>Du verwaltest noch keine Identitäten</h4>
+                <p>
+                    Um diese App verwenden zu können, musst du von einem Administrator einer oder mehreren Identitäten zugewiesen werden.
+                    Fragen? <a href="https://go.rafaelurben.ch/devmail">Kontaktiere den Entwickler</a>
+                </p>
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}
+
+{% block help %}
+    <p>
+        Auf dieser Seite wird dir eine Liste aller Bäume angezeigt, auf welche du Zugriff hast. Mit Klick darauf gelangst du zum Startpunkt im entsprechenden Baum.
+        Darunter siehst du die "Identitäten", welche du im entsprechenden Baum verwaltest. Mit Klick auf diese gelangst du direkt zu deren Position im Baum.
+        Du kannst mit deinem Account mehr als eine Identität pro Baum verwalten. Identitäten können nur von ausgewählten Personen mit Accounts verknüpft werden. 
+    </p>
+    <hr>
+    {{ block.super }}
+{% endblock %}

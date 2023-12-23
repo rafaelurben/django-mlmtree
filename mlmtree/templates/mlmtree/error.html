@@ -1,0 +1,18 @@
+{% extends 'mlmtree/base.html' %}}
+
+{% block title %}Error{% endblock %}
+
+{% block body %}
+
+    {% include 'mlmtree/snippets/menubar.html' %}
+
+    <div class="px-4 py-3 container-fluid">
+        <div class="row">
+            <div class="col">
+                <h3>{{ title | default:"404 - Nicht gefunden" }}</h3>
+                <p>{{ text | default:"Diese Seite wurde leider nicht gefunden!"}}</p>
+            </div>
+        </div>
+    </div>
+    
+{% endblock %}

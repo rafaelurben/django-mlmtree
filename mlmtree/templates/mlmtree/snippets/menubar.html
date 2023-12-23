@@ -1,0 +1,61 @@
+<nav id="menubar" class="navbar navbar-expand-lg navbar-dark bg-dark">
+    {% url 'account:home' as homeurl %}
+
+    <style>
+        @media (min-width: 992px) {
+            .border-lg {
+                border: 1px solid #ccc;
+            }
+        }
+    </style>
+
+    <div class="container-fluid">
+        <a id="menubartitle" class="navbar-brand ms-3" href="{{ headerurl | default:"#"}}">{{ headertitle | default:"MLMTree"}}</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbar">
+    
+            <ul class="navbar-nav nav w-100 me-3 mb-2 justify-content-end">
+                {% if not user.is_authenticated %}
+                    <li class="nav-item border-lg rounded border-secondary ms-2">
+                        <a class="nav-link ms-1 me-1" href="{% url 'mlmtree:login' %}?next=/mlmtree/" title="Login">
+                            <i class="fas fa-fw fa-sign-in-alt"></i>
+                            <span class="d-lg-none ms-2">Login</span>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="nav-item border-lg rounded border-secondary ms-2">
+                        <a class="nav-link ms-1 me-1" href="{% url 'mlmtree:home' %}" title="Zur MLMTree Startseite">
+                            <i class="fas fa-fw fa-home"></i>
+                            <span class="d-lg-none ms-2">Startseite</span>
+                        </a>
+                    </li>
+                    <li class="nav-item border-lg rounded border-secondary ms-2">
+                        <a class="nav-link ms-1 me-1" href="{% url 'account:home' %}?next=/mlmtree/" title="Accountverwaltung">
+                            <i class="fas fa-fw fa-user"></i>
+                            <span class="d-lg-none ms-2">Account:</span>
+                            <span class="ms-0 ms-lg-2">{{ user.username }}</span>
+                        </a>
+                    </li>
+                    <li class="nav-item border-lg rounded border-secondary ms-2">
+                        <form method="post" action="{% url 'account:logout' %}?next={% url 'mlmtree:home' %}">
+                            {% csrf_token %}
+                            <button class="btn nav-link ms-1 me-1" type="submit" title="Logout">
+                                <i class="fas fa-fw fa-sign-out-alt"></i>
+                                <span class="d-lg-none ms-2">Logout</span>
+                            </button>
+                        </form>
+                    </li>
+                {% endif %}
+
+                <li class="nav-item border-lg rounded border-secondary ms-2">
+                    <a class="nav-link ms-1 me-1" data-bs-toggle="offcanvas" data-bs-target="#helpCanvas" aria-controls="helpCanvas" title="Hilfe">
+                        <i class="far fa-fw fa-question-circle"></i>
+                        <span class="d-lg-none ms-2">Hilfe</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

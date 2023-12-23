@@ -1,0 +1,12 @@
+{% extends 'mlmtree/base.html' %}
+
+{% block body %}
+
+    {% include 'mlmtree/snippets/menubar.html' %}
+
+    <div id="content" class="px-4 py-3 container-fluid">
+        {% block content %}{% endblock %}
+    </div>
+
+
+{% endblock %}

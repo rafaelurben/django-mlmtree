@@ -1,0 +1,35 @@
+{% csrf_token %}
+
+{% if form.non_field_errors %}
+    {% for error in form.non_field_errors %}
+        <div class="text-danger">{{ error }}</div>
+    {% endfor %}
+    <br>
+{% endif %}
+
+{% for hidden in form.hidden_fields %}
+    {{ hidden }}
+{% endfor %}
+{% for field in form.visible_fields %}
+    <div class="mb-3">
+        <label for="{{ field.name }}" class="form-label">{{ field.label }}</label>
+        {% if field.errors %}
+            <input name="{{ field.name }}" {% for name, value in field.field.widget.attrs.items %}{{name}}="{{value}}" {% endfor %} type="{{ field.widget_type }}" class="form-control is-invalid" id="{{ field.id_for_label }}" value="{{ field.value | default:''}}" aria-describedby="{{ field.name }}__errors">
+        {% elif not form.non_field_errors and form.is_bound %}
+            <input name="{{ field.name }}" {% for name, value in field.field.widget.attrs.items %}{{name}}="{{value}}" {% endfor %} type="{{ field.widget_type }}" class="form-control is-valid" id="{{ field.id_for_label }}" value="{{ field.value | default:''}}" >
+        {% else %}
+            <input name="{{ field.name }}" {% for name, value in field.field.widget.attrs.items %}{{name}}="{{value}}" {% endfor %} type="{{ field.widget_type }}" class="form-control" id="{{ field.id_for_label }}" value="{{ field.value | default:''}}" >
+        {% endif %}
+        
+        {% if field.help_text %}
+            <div class="form-text">{{ field.help_text }}</div>
+        {% endif %}
+        {% if field.errors %}
+            <div class="invalid-feedback" id="{{ field.name }}__errors">
+                {% for error in field.errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+{% endfor %}

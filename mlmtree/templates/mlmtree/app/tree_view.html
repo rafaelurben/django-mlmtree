@@ -1,0 +1,227 @@
+{% extends 'mlmtree/app/base.html' %}
+{% load static %}
+
+{% block title %}{{ tree.title }}{% endblock %}
+
+{% block content %}
+
+    <!-- Toasts -->
+
+    <div id="toasts" class="position-fixed top-0 start-0 p-3">
+        <div id="toast-error" class="hide mb-3 toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="2500">
+            <div class="d-flex">
+                <div class="toast-body">
+                    Es ist leider ein Fehler aufgetreten!
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+
+        <div id="toast-success" class="hide mb-3 toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="2500">
+            <div class="d-flex">
+                <div class="toast-body">
+                    Aktion erfolgreich!
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Spinner -->
+
+    <div class="mb-2 spinner-border" id="spinner" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+
+    <!-- Parent & Current -->
+
+    <div class="row">
+        <a id="person-parent" class="text-decoration-none col col-12 col-lg-4 p-1 mb-5">
+            <h6 class="text-secondary">Sponsor</h6>
+            <hr class="text-dark">
+            <!-- Replaced by JS from #personcardtemplate div -->
+        </a>
+
+        <div id="person-main" class="col col-12 col-lg-4 p-1 mb-5 mt-3 mt-lg-0">
+            <h6 class="text-secondary">Ausgewählte Person</h6>
+            <hr>
+            <!-- Replaced by JS from #personcardtemplate div -->
+        </div>
+
+        <div id="person-actions" class="col col-12 col-lg-4 p-1 mb-5 mt-3 mt-lg-0">
+            <h6 class="text-secondary">Aktionen</h6>
+            <hr>
+            <!-- Edited by JS -->
+        </div>
+    </div>
+    
+    <hr>
+
+    <!-- Children -->
+
+    <div id="person-children" class="row">
+        <!-- Content added by JavaScript from #personcardtemplate a -->
+    </div>
+
+    <!-- Templates -->
+
+    <template id="personcardtemplate">
+        <a class="col col-12 col-sm-6 col-lg-4 col-xl-3 p-1 text-decoration-none">
+            <div class="p-2 border border-dark rounded rounded-3 bg-dark h-100 w-100">
+                <!-- Badges -->
+                <div class="text-end mlmtree-badges" style="height: 1.5rem; margin-bottom: -1.5rem;"></div>
+                <!-- Name -->
+                <h4 class="text-light mlmtree-pcardname pe-5"></h4>
+                <!-- Infos -->
+                <i class="text-secondary mlmtree-pcarduserid"></i>
+                <br class="mb-1">
+                <pre class="mb-1 text-secondary mlmtree-pcardinfo"></pre>
+            </div>
+        </a>
+    </template>
+
+    <!-- Modals -->
+
+    <div class="modal fade" id="addChildFormModal" tabindex="-1" aria-labelledby="addChildFormModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addChildFormModalLabel">Neue Person hinzufügen</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>'Kind' unter <span id="addchildform--personname"></span> (<span id="addchildform--personid"></span>) erstellen</p>
+                    <form>
+                        <div class="mb-3">
+                            <label for="addchildform-name" class="col-form-label">Name:</label>
+                            <input type="text" class="form-control" id="addchildform-name" required maxlength="50" placeholder="Dieses Feld darf nicht leer sein">
+                        </div>
+                        <div class="mb-3">
+                            <label for="addchildform-userid" class="col-form-label">Benutzeridentifikation:</label>
+                            <input type="text" class="form-control" id="addchildform-userid" maxlength="254" placeholder="z.B. Mitgliedernummer oder Benutzername">
+                        </div>
+                        <div class="mb-3">
+                            <label for="addchildform-email" class="col-form-label">E-Mail:</label>
+                            <input type="email" class="form-control" id="addchildform-email" placeholder="E-Mail-Adresse">
+                        </div>
+                        <div class="mb-3">
+                            <label for="addchildform-info" class="col-form-label">Info:</label>
+                            <textarea class="form-control" id="addchildform-info" placeholder="Zusätzliche Infos zu dieser Person"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Schliessen</button>
+                    <button type="button" class="btn btn-primary" onclick="mlmtree_addchild_post();">Person hinzufügen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editPersonFormModal" tabindex="-1" aria-labelledby="editPersonFormLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editPersonFormLabel">Person bearbeiten</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p><span id="editpersonform--personname"></span> (<span id="editpersonform--personid"></span>) bearbeiten</p>
+                    <form>
+                        <div class="mb-3">
+                            <label for="editpersonform-name" class="col-form-label">Name:</label>
+                            <input type="text" class="form-control" id="editpersonform-name" required maxlength="50" placeholder="Dieses Feld darf nicht leer sein">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editpersonform-userid" class="col-form-label">Benutzeridentifikation:</label>
+                            <input type="text" class="form-control" id="editpersonform-userid" maxlength="254" placeholder="z.B. Mitgliedernummer oder Benutzername">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editpersonform-email" class="col-form-label">E-Mail:</label>
+                            <input type="text" class="form-control" id="editpersonform-email" placeholder="E-Mail-Adresse">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editpersonform-info" class="col-form-label">Info:</label>
+                            <textarea class="form-control" id="editpersonform-info" placeholder="Zusätzliche Infos zu dieser Person"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Schliessen</button>
+                    <button type="button" class="btn btn-primary" onclick="mlmtree_editperson_post();">Person aktualisieren</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="deletePersonFormModal" tabindex="-1" aria-labelledby="deletePersonFormModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deletePersonFormModalLabel">Person löschen</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Möchtest du <span id="deletepersonform--personname"></span> (<span id="deletepersonform--personid"></span>) wirklich löschen?</p>
+                    <p id="deletepersonform--parentid" style="display: none;"></p>
+                    <form>
+                        <div class="mb-3">
+                            <label for="deletepersonform-name" class="col-form-label">Name:</label>
+                            <input disabled type="text" class="form-control" id="deletepersonform-name" required maxlength="50" placeholder="Dieses Feld darf nicht leer sein">
+                        </div>
+                        <div class="mb-3">
+                            <label for="deletepersonform-userid" class="col-form-label">Benutzeridentifikation:</label>
+                            <input disabled type="text" class="form-control" id="deletepersonform-userid" maxlength="254" placeholder="z.B. Mitgliedernummer oder Benutzername">
+                        </div>
+                        <div class="mb-3">
+                            <label for="deletepersonform-email" class="col-form-label">E-Mail:</label>
+                            <input disabled type="email" class="form-control" id="deletepersonform-email" placeholder="E-Mail-Adresse">
+                        </div>
+                        <div class="mb-3">
+                            <label for="deletepersonform-info" class="col-form-label">Info:</label>
+                            <textarea disabled class="form-control" id="deletepersonform-info" placeholder="Zusätzliche Infos zu dieser Person"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Schliessen</button>
+                    <button type="button" class="btn btn-danger" onclick="mlmtree_deleteperson_post();">Person löschen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block help %}
+    <p>
+        Auf dieser Seite siehst du eine Person, der dazugehörige Sponsor und die direkte Downline.
+        Durch Klicken auf die entsprechende Person gelangst du zu dieser.
+        Unter "Aktionen" kannst du, sofern du dazu berechtigt bist, ein neues Kind (Person in der direkten Downline) erstellen
+        oder die Person bearbeiten.
+    </p>
+    <hr>
+    {{ block.super }}
+{% endblock %}
+
+{% block scripts %}
+
+    <script src="{% static "mlmtree/js/tree.js" %}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+			integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+			crossorigin="anonymous"></script>
+
+    <script>
+        window.mlmtree_api_url_base = "{% url 'mlmtree:api-base' %}";
+        window.mlmtree_tree_id = "{{ tree.id }}";
+
+        window.addEventListener('load', function() {
+            mlmtree_loadperson(location.hash.substr(1));
+        })
+
+        window.addEventListener('hashchange', function() {
+            mlmtree_loadperson(location.hash.substr(1));
+        })
+    </script>
+
+{% endblock %}
