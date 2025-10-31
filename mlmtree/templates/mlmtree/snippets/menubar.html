@@ -19,7 +19,7 @@
             <ul class="navbar-nav nav w-100 me-3 mb-2 justify-content-end">
                 {% if not user.is_authenticated %}
                     <li class="nav-item border-lg rounded border-secondary ms-2">
-                        <a class="nav-link ms-1 me-1" href="{% url 'mlmtree:login' %}?next=/mlmtree/" title="Login">
+                        <a class="nav-link ms-1 me-1" href="{% url 'account:login' %}?next=/mlmtree/" title="Login">
                             <i class="fas fa-fw fa-sign-in-alt"></i>
                             <span class="d-lg-none ms-2">Login</span>
                         </a>

@@ -33,12 +33,6 @@ urlpatterns = [
     # Fake static
     # path('manifest.webmanifest', views.manifest, name="manifest"),
 
-    # Login
-    path('login/',
-         auth_views.LoginView.as_view(
-             template_name='mlmtree/login.html',),
-         name="login"),
-
     # Errors
 
     re_path('^api/.*', views.api_error404, name="api-base"),

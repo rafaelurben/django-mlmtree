@@ -12,7 +12,7 @@ from .decorators import require_object, require_objects
 # Create your views here.
 
 
-@login_required(login_url=reverse_lazy('mlmtree:login'))
+@login_required()
 def home(request):
     trees = {}
 
@@ -37,7 +37,7 @@ def home(request):
     })
 
 
-@login_required(login_url=reverse_lazy('mlmtree:login'))
+@login_required()
 @require_object(Tree)
 def tree_view(request, tree: Tree):
     if request.user.is_superuser or Person.objects.filter(tree=tree, user=request.user).exists():
@@ -59,7 +59,7 @@ API_404 = JsonResponse({
 }, status=404)
 
 
-@login_required(login_url=reverse_lazy('mlmtree:login'))
+@login_required()
 @require_objects([("tree_id", Tree, "tree"), ("person_id", Person, "person")], custom_response=API_404)
 def api_person_get(request, tree: Tree, person: Person):
     if person.tree_id != tree.pk:
@@ -75,7 +75,7 @@ def api_person_get(request, tree: Tree, person: Person):
     return JsonResponse(person.json(urlpattern=tree.urlpattern, loggedinuser=request.user))
 
 
-@login_required(login_url=reverse_lazy('mlmtree:login'))
+@login_required()
 @require_objects([("tree_id", Tree, "tree"), ("person_id", Person, "person")], custom_response=API_404)
 def api_person_get_teamcount(request, tree: Tree, person: Person):
     if person.tree_id != tree.pk:
@@ -93,7 +93,7 @@ def api_person_get_teamcount(request, tree: Tree, person: Person):
 
 @csrf_exempt
 @require_POST
-@login_required(login_url=reverse_lazy('mlmtree:login'))
+@login_required()
 @require_objects([("tree_id", Tree, "tree"), ("person_id", Person, "parent")], custom_response=API_404)
 def api_person_createchild(request, tree: Tree, parent: Person):
     if parent.tree_id != tree.pk:
@@ -137,7 +137,7 @@ def api_person_createchild(request, tree: Tree, parent: Person):
 
 @csrf_exempt
 @require_POST
-@login_required(login_url=reverse_lazy('mlmtree:login'))
+@login_required()
 @require_objects([("tree_id", Tree, "tree"), ("person_id", Person, "person")], custom_response=API_404)
 def api_person_update(request, tree: Tree, person: Person):
     if person.tree_id != tree.pk:
@@ -177,7 +177,7 @@ def api_person_update(request, tree: Tree, person: Person):
 
 @csrf_exempt
 @require_POST
-@login_required(login_url=reverse_lazy('mlmtree:login'))
+@login_required()
 @require_objects([("tree_id", Tree, "tree"), ("person_id", Person, "person")], custom_response=API_404)
 def api_person_delete(request, tree: Tree, person: Person):
     if person.tree_id != tree.pk:
