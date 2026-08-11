@@ -1,1 +1,1 @@
-django==6.0.8
+django==6.1
